@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>time</title>
+<link rel="stylesheet" type="text/css" href="style.css">
+	<style>
+.main{
+	width: 500px;
+	height: 500px;
+	/*padding: 10px;*/
+	margin: 0 auto;
+	/*border:1px solid #ccc;*/
+}
+
+	</style>
+</head>
+<body>
+<div class="main">
+<canvas id="canvas" width="500" height="500">不支持canvas</canvas>
+<div id="clock">
+</div>
+	</div>
+</body>
+<script type="text/javascript">
+var canvas;
+var canvasWidth = 500;
+var canvasHeight = canvasWidth;
+if(document.querySelector){
+canvas=document.querySelector("#canvas");
+}else{
+canvas=document.getElementById("canvas");	
+}
+canvas.width = canvasWidth;
+canvas.height = canvasHeight;
+if(!canvas.getContext){
+   alert("不支持");
+}else{
+	var context=canvas.getContext("2d");
+	
+	
+	setInterval(function(){
+		 var date=new Date();
+		 draw();
+         drawTime(date.getHours(),date.getMinutes(),date.getSeconds());
+
+	},1000)
+	
+      
+}
+function draw(){
+     context.clearRect(0,0,canvasWidth,canvasWidth);
+	//canvas框
+   context.beginPath();
+   context.save();
+   context.strokeStyle="balck";
+   // context.strokeRect(0,0,canvasWidth,canvasWidth);
+   context.closePath();
+	context.beginPath();//画表的轮廓
+	context.restore();
+	context.arc(canvasWidth/2,canvasWidth/2,canvasWidth/2,0,2*Math.PI,false);//false表示顺时针
+	context.strokeStyle="balck";
+	context.lineWidth=3;
+	context.stroke();
+	context.closePath();
+	context.beginPath();//画表的轮廓
+	context.restore();
+	context.arc(canvasWidth/2,canvasWidth/2,6,0,2*Math.PI,false);//false表示顺时针
+	context.strokeStyle="balck";
+	context.lineWidth=6;
+	context.stroke();
+	context.closePath();
+	//画表的针
+	for(var i = 0; i < 12; i++)
+      {
+            context.save();//保存当前环境的状态
+            context.translate(canvasWidth/2,canvasWidth/2);//将起始点定位到圆心
+            context.lineWidth = 6;
+            context.lineCap="round";
+            context.strokeStyle = "black";
+            context.rotate(i*30*Math.PI/180);//设置旋转角度 弧度360/12=30,所以每次乘以30   
+            context.beginPath();
+            context.moveTo(0, -230);
+            context.lineTo(0, -249);
+            context.stroke();
+            
+            context.closePath();
+            //时刻数字--------------------------
+            context.beginPath();
+            context.save();            
+             context.rotate(-i*30*Math.PI/180);
+            context.font="italic small-caps bold 16px arial";
+            context.lineWidth = 1;
+            context.textAlign = "start";
+            context.textBaseLine = "middle";        
+            
+            var x=(canvasWidth/2)*Math.sin(i*30*Math.PI/180)-40*Math.sin(i*30*Math.PI/180);
+            var y=(-canvasWidth/2)*Math.cos(i*30*Math.PI/180)+40*Math.cos(i*30*Math.PI/180)	;
+            
+             context.strokeText(i==0? 12:i,x,y);
+            context.restore();
+            context.closePath();
+            //-----------------------------------      
+            context.restore();
+
+     }
+     for(var i = 0; i < 60; i++)
+      {
+            context.save();//保存当前环境的状态
+            context.translate(canvasWidth/2,canvasWidth/2);//将起始点定位到圆心
+            context.lineWidth = 4;
+            context.lineCap="round";
+            context.strokeStyle = "black";
+            context.rotate(i*6*Math.PI/180);//设置旋转角度 弧度360/60=6,所以每次乘以6   
+            context.beginPath();
+            context.moveTo(0, -240);
+            context.lineTo(0, -249);
+            context.stroke();
+            
+            context.closePath();
+             context.restore();
+
+      }
+     
+}
+function drawTime(hour,minute,second){
+	  drawhour(hour,minute,second);
+      drawminute(hour,minute,second);
+      drawsecond(hour,minute,second);
+}
+function drawhour(hour,minute,second){
+   context.save();
+   context.translate(canvasWidth/2,canvasWidth/2);
+   context.lineWidth =7;
+   context.lineCap="round";
+   context.strokeStyle = "black";
+   context.rotate((hour*30+(minute/60)*30)*Math.PI/180);
+   context.beginPath();
+	context.moveTo(0, 0);
+	context.lineTo(0, -150);
+	context.stroke();
+
+	context.closePath();
+	 context.restore();
+}
+function drawminute(hour,minute,second){
+   context.save();
+   context.translate(canvasWidth/2,canvasWidth/2);
+   context.lineWidth = 4;
+   context.lineCap="round";
+   context.strokeStyle = "black";
+   context.rotate((minute*6+(second/60)*6)*Math.PI/180);
+   context.beginPath();
+	context.moveTo(0, 0);
+	context.lineTo(0, -200);
+	context.stroke();
+
+	context.closePath();
+	 context.restore();
+}
+function drawsecond(hour,minute,second){
+  context.save();
+   context.translate(canvasWidth/2,canvasWidth/2);
+   context.lineWidth = 2;
+   context.lineCap="round";
+   context.strokeStyle = "black";
+   context.rotate(second*6*Math.PI/180);
+   context.beginPath();
+	context.moveTo(0, 0);
+	context.lineTo(0, -230);
+	context.stroke();
+
+	context.closePath();
+	 context.restore();
+}
+
+function WindowToCanvas(x,y){
+	var bbox=canvas.getBoundingClientRect();
+	return {x:Math.round(x-bbox.left),y:Math.round(y-bbox.top)}
+}
+
+
+</script>
+<script type="text/javascript" src="javascript.js"></script>
+</html>
